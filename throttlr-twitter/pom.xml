@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>throttlr</artifactId>
+        <groupId>io.github.throttlr</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>throttlr-twitter</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>throttlr-twitter</name>
+    <url>https://throttlr.github.io/twitter</url>
+    <properties>
+        <java.version>1.8</java.version>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.twitter4j</groupId>
+            <artifactId>twitter4j-core</artifactId>
+            <version>4.0.6</version>
+        </dependency>
+    </dependencies>
+</project>
