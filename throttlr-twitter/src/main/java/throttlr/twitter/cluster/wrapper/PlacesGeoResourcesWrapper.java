@@ -1,20 +1,20 @@
-package throttlr.twitter.wrapper;
+package throttlr.twitter.cluster.wrapper;
 
+import throttlr.twitter.cluster.strategy.LoadBalanceStrategy;
 import throttlr.twitter.common.ResourceFamily;
 import throttlr.twitter.internal.Either;
-import throttlr.twitter.strategy.ThrottleStrategy;
 import twitter4j.*;
 import twitter4j.api.PlacesGeoResources;
 
-public class PlacesGeoResourcesWrapper extends WrapperBase<PlacesGeoResources> implements PlacesGeoResources {
+public class PlacesGeoResourcesWrapper extends WrapperBase implements PlacesGeoResources {
 
-    public PlacesGeoResourcesWrapper(PlacesGeoResources placesGeoResources, ThrottleStrategy throttleStrategy) {
-        super(placesGeoResources, throttleStrategy);
+    public PlacesGeoResourcesWrapper(LoadBalanceStrategy loadBalanceStrategy) {
+        super(loadBalanceStrategy);
     }
 
     @Override
     public Place getGeoDetails(String placeId) throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.geoIdPlaceId, () -> {
+        return loadBalanceStrategy.balance(ResourceFamily.geoIdPlaceId, (resources) -> {
             try {
                 return Either.right(resources.getGeoDetails(placeId));
             } catch (TwitterException e) {
@@ -25,7 +25,7 @@ public class PlacesGeoResourcesWrapper extends WrapperBase<PlacesGeoResources> i
 
     @Override
     public ResponseList<Place> reverseGeoCode(GeoQuery query) throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.geoReverseGeocode, () -> {
+        return loadBalanceStrategy.balance(ResourceFamily.geoReverseGeocode, (resources) -> {
             try {
                 return Either.right(resources.reverseGeoCode(query));
             } catch (TwitterException e) {
@@ -36,7 +36,7 @@ public class PlacesGeoResourcesWrapper extends WrapperBase<PlacesGeoResources> i
 
     @Override
     public ResponseList<Place> searchPlaces(GeoQuery query) throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.geoSearch, () -> {
+        return loadBalanceStrategy.balance(ResourceFamily.geoSearch, (resources) -> {
             try {
                 return Either.right(resources.searchPlaces(query));
             } catch (TwitterException e) {
@@ -47,7 +47,7 @@ public class PlacesGeoResourcesWrapper extends WrapperBase<PlacesGeoResources> i
 
     @Override
     public ResponseList<Place> getSimilarPlaces(GeoLocation location, String name, String containedWithin, String streetAddress) throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.geoSimilarPlaces, () -> {
+        return loadBalanceStrategy.balance(ResourceFamily.geoSimilarPlaces, (resources) -> {
             try {
                 return Either.right(resources.getSimilarPlaces(location, name, containedWithin, streetAddress));
             } catch (TwitterException e) {

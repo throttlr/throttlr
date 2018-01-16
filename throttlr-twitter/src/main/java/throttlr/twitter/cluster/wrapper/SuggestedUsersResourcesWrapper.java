@@ -1,23 +1,23 @@
-package throttlr.twitter.wrapper;
+package throttlr.twitter.cluster.wrapper;
 
+import throttlr.twitter.cluster.strategy.LoadBalanceStrategy;
 import throttlr.twitter.common.ResourceFamily;
 import throttlr.twitter.internal.Either;
-import throttlr.twitter.strategy.ThrottleStrategy;
 import twitter4j.Category;
 import twitter4j.ResponseList;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.api.SuggestedUsersResources;
 
-public class SuggestedUsersResourcesWrapper extends WrapperBase<SuggestedUsersResources> implements SuggestedUsersResources {
+public class SuggestedUsersResourcesWrapper extends WrapperBase implements SuggestedUsersResources {
 
-    public SuggestedUsersResourcesWrapper(SuggestedUsersResources suggestedUsersResources, ThrottleStrategy throttleStrategy) {
-        super(suggestedUsersResources, throttleStrategy);
+    public SuggestedUsersResourcesWrapper(LoadBalanceStrategy loadBalanceStrategy) {
+        super(loadBalanceStrategy);
     }
 
     @Override
     public ResponseList<User> getUserSuggestions(String categorySlug) throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.usersSuggestionsSlug, () -> {
+        return loadBalanceStrategy.balance(ResourceFamily.usersSuggestionsSlug, (resources) -> {
             try {
                 return Either.right(resources.getUserSuggestions(categorySlug));
             } catch (TwitterException e) {
@@ -28,7 +28,7 @@ public class SuggestedUsersResourcesWrapper extends WrapperBase<SuggestedUsersRe
 
     @Override
     public ResponseList<Category> getSuggestedUserCategories() throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.usersSuggestions, () -> {
+        return loadBalanceStrategy.balance(ResourceFamily.usersSuggestions, (resources) -> {
             try {
                 return Either.right(resources.getSuggestedUserCategories());
             } catch (TwitterException e) {
@@ -39,7 +39,7 @@ public class SuggestedUsersResourcesWrapper extends WrapperBase<SuggestedUsersRe
 
     @Override
     public ResponseList<User> getMemberSuggestions(String categorySlug) throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.usersSuggestionsSlugMembers, () -> {
+        return loadBalanceStrategy.balance(ResourceFamily.usersSuggestionsSlugMembers, (resources) -> {
             try {
                 return Either.right(resources.getMemberSuggestions(categorySlug));
             } catch (TwitterException e) {

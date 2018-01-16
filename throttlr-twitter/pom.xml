@@ -4,11 +4,12 @@
     <parent>
         <artifactId>throttlr</artifactId>
         <groupId>io.github.throttlr</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>0.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>throttlr-twitter</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <name>throttlr-twitter</name>
+    <description>A Twitter library for Java to throttle API calls as not to exceed rate limiting.</description>
     <url>https://throttlr.github.io/twitter</url>
     <properties>
         <java.version>1.8</java.version>
@@ -22,4 +23,22 @@
             <version>4.0.6</version>
         </dependency>
     </dependencies>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>tomingtoming</id>
+            <name>Keisuke Takamiya</name>
+            <url>https://github.com/tomingtoming</url>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/throttlr/throttlr.git</connection>
+        <developerConnection>scm:git:ssh://github.com:throttlr/throttlr.git</developerConnection>
+        <url>http://github.com/throttlr/throttlr/tree/master</url>
+    </scm>
 </project>

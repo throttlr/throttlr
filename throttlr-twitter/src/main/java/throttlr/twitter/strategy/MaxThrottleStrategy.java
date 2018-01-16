@@ -12,13 +12,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class CruiseThrottleStrategy implements ThrottleStrategy {
+public class MaxThrottleStrategy implements ThrottleStrategy {
 
     private final TimeSource timeSource;
     private final Map<String, RateLimitStatus> rateLimits = new HashMap<>();
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public CruiseThrottleStrategy(TimeSource timeSource) {
+    public MaxThrottleStrategy(TimeSource timeSource) {
         this.timeSource = timeSource;
     }
 
@@ -32,12 +32,10 @@ public class CruiseThrottleStrategy implements ThrottleStrategy {
                     // Rate limit is now effective
                     int reset = rateLimitStatus.getResetTimeInSeconds();
                     if (0 < rateLimitStatus.getRemaining()) {
-                        long timeout = (1000L * (reset - now)) / rateLimitStatus.getRemaining();
-                        logger.debug("Cruise wait {} milliseconds with {} remains for {}", timeout, rateLimitStatus.getRemaining(), resourceFamily);
-                        rateLimits.wait(timeout);
+                        logger.debug("No wait with {} remains for {}", rateLimitStatus.getRemaining(), resourceFamily);
                     } else {
                         long timeout = 1000L * (reset - now);
-                        logger.debug("Cruise wait {} milliseconds by no remains for {}", timeout, resourceFamily);
+                        logger.debug("Wait {} milliseconds by no remains for {}", timeout, resourceFamily);
                         rateLimits.wait(timeout);
                     }
                 }

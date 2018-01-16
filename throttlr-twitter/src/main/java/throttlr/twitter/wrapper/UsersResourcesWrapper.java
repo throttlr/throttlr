@@ -1,5 +1,6 @@
 package throttlr.twitter.wrapper;
 
+import throttlr.twitter.common.ResourceFamily;
 import throttlr.twitter.internal.Either;
 import throttlr.twitter.strategy.ThrottleStrategy;
 import twitter4j.*;
@@ -8,21 +9,17 @@ import twitter4j.api.UsersResources;
 import java.io.File;
 import java.io.InputStream;
 
-public class UsersResourcesWrapper implements UsersResources {
-
-    private ThrottleStrategy throttleStrategy;
-    private UsersResources usersResources;
+public class UsersResourcesWrapper extends WrapperBase<UsersResources> implements UsersResources {
 
     public UsersResourcesWrapper(UsersResources usersResources, ThrottleStrategy throttleStrategy) {
-        this.throttleStrategy = throttleStrategy;
-        this.usersResources = usersResources;
+        super(usersResources, throttleStrategy);
     }
 
     @Override
     public AccountSettings getAccountSettings() throws TwitterException {
-        return throttleStrategy.throttle("/account/settings", () -> {
+        return throttleStrategy.throttle(ResourceFamily.accountSettings, () -> {
             try {
-                return Either.right(usersResources.getAccountSettings());
+                return Either.right(resources.getAccountSettings());
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -31,9 +28,9 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public User verifyCredentials() throws TwitterException {
-        return throttleStrategy.throttle("/account/verify_credentials", () -> {
+        return throttleStrategy.throttle(ResourceFamily.accountVerifyCredentials, () -> {
             try {
-                return Either.right(usersResources.verifyCredentials());
+                return Either.right(resources.verifyCredentials());
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -42,9 +39,9 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public AccountSettings updateAccountSettings(Integer trendLocationWoeid, Boolean sleepTimeEnabled, String startSleepTime, String endSleepTime, String timeZone, String lang) throws TwitterException {
-        return throttleStrategy.throttle("/account/settings", () -> {
+        return throttleStrategy.throttle(ResourceFamily.accountSettings, () -> {
             try {
-                return Either.right(usersResources.updateAccountSettings(trendLocationWoeid, sleepTimeEnabled, startSleepTime, endSleepTime, timeZone, lang));
+                return Either.right(resources.updateAccountSettings(trendLocationWoeid, sleepTimeEnabled, startSleepTime, endSleepTime, timeZone, lang));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -53,9 +50,9 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public User updateProfile(String name, String url, String location, String description) throws TwitterException {
-        return throttleStrategy.throttle("/account/update_profile", () -> {
+        return throttleStrategy.throttle(ResourceFamily.accountUpdateProfile, () -> {
             try {
-                return Either.right(usersResources.updateProfile(name, url, location, description));
+                return Either.right(resources.updateProfile(name, url, location, description));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -64,9 +61,9 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public User updateProfileBackgroundImage(File image, boolean tile) throws TwitterException {
-        return throttleStrategy.throttle("/account/update_profile", () -> {
+        return throttleStrategy.throttle(ResourceFamily.accountUpdateProfile, () -> {
             try {
-                return Either.right(usersResources.updateProfileBackgroundImage(image, tile));
+                return Either.right(resources.updateProfileBackgroundImage(image, tile));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -75,9 +72,9 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public User updateProfileBackgroundImage(InputStream image, boolean tile) throws TwitterException {
-        return throttleStrategy.throttle("/account/update_profile", () -> {
+        return throttleStrategy.throttle(ResourceFamily.accountUpdateProfile, () -> {
             try {
-                return Either.right(usersResources.updateProfileBackgroundImage(image, tile));
+                return Either.right(resources.updateProfileBackgroundImage(image, tile));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -88,9 +85,9 @@ public class UsersResourcesWrapper implements UsersResources {
     @Deprecated
     @SuppressWarnings("deprecation")
     public User updateProfileColors(String profileBackgroundColor, String profileTextColor, String profileLinkColor, String profileSidebarFillColor, String profileSidebarBorderColor) throws TwitterException {
-        return throttleStrategy.throttle("/account/update_profile", () -> {
+        return throttleStrategy.throttle(ResourceFamily.accountUpdateProfile, () -> {
             try {
-                return Either.right(usersResources.updateProfileColors(profileBackgroundColor, profileTextColor, profileLinkColor, profileSidebarFillColor, profileSidebarBorderColor));
+                return Either.right(resources.updateProfileColors(profileBackgroundColor, profileTextColor, profileLinkColor, profileSidebarFillColor, profileSidebarBorderColor));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -99,9 +96,9 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public User updateProfileImage(File image) throws TwitterException {
-        return throttleStrategy.throttle("/account/update_profile", () -> {
+        return throttleStrategy.throttle(ResourceFamily.accountUpdateProfile, () -> {
             try {
-                return Either.right(usersResources.updateProfileImage(image));
+                return Either.right(resources.updateProfileImage(image));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -110,9 +107,9 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public User updateProfileImage(InputStream image) throws TwitterException {
-        return throttleStrategy.throttle("/account/update_profile", () -> {
+        return throttleStrategy.throttle(ResourceFamily.accountUpdateProfile, () -> {
             try {
-                return Either.right(usersResources.updateProfileImage(image));
+                return Either.right(resources.updateProfileImage(image));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -121,19 +118,19 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public PagableResponseList<User> getBlocksList() throws TwitterException {
-        return usersResources.getBlocksList();
+        return resources.getBlocksList();
     }
 
     @Override
     public PagableResponseList<User> getBlocksList(long cursor) throws TwitterException {
-        return usersResources.getBlocksList(cursor);
+        return resources.getBlocksList(cursor);
     }
 
     @Override
     public IDs getBlocksIDs() throws TwitterException {
-        return throttleStrategy.throttle("/blocks/ids", () -> {
+        return throttleStrategy.throttle(ResourceFamily.blocksIds, () -> {
             try {
-                return Either.right(usersResources.getBlocksIDs());
+                return Either.right(resources.getBlocksIDs());
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -142,9 +139,9 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public IDs getBlocksIDs(long cursor) throws TwitterException {
-        return throttleStrategy.throttle("/blocks/ids", () -> {
+        return throttleStrategy.throttle(ResourceFamily.blocksIds, () -> {
             try {
-                return Either.right(usersResources.getBlocksIDs(cursor));
+                return Either.right(resources.getBlocksIDs(cursor));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -153,29 +150,29 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public User createBlock(long userId) throws TwitterException {
-        return usersResources.createBlock(userId);
+        return resources.createBlock(userId);
     }
 
     @Override
     public User createBlock(String screenName) throws TwitterException {
-        return usersResources.createBlock(screenName);
+        return resources.createBlock(screenName);
     }
 
     @Override
     public User destroyBlock(long userId) throws TwitterException {
-        return usersResources.destroyBlock(userId);
+        return resources.destroyBlock(userId);
     }
 
     @Override
     public User destroyBlock(String screen_name) throws TwitterException {
-        return usersResources.destroyBlock(screen_name);
+        return resources.destroyBlock(screen_name);
     }
 
     @Override
     public PagableResponseList<User> getMutesList(long cursor) throws TwitterException {
-        return throttleStrategy.throttle("/mutes/users/list", () -> {
+        return throttleStrategy.throttle(ResourceFamily.mutesUsersList, () -> {
             try {
-                return Either.right(usersResources.getMutesList(cursor));
+                return Either.right(resources.getMutesList(cursor));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -184,9 +181,9 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public IDs getMutesIDs(long cursor) throws TwitterException {
-        return throttleStrategy.throttle("/mutes/users/ids", () -> {
+        return throttleStrategy.throttle(ResourceFamily.mutesUsersIds, () -> {
             try {
-                return Either.right(usersResources.getMutesIDs(cursor));
+                return Either.right(resources.getMutesIDs(cursor));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -195,29 +192,29 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public User createMute(long userId) throws TwitterException {
-        return usersResources.createMute(userId);
+        return resources.createMute(userId);
     }
 
     @Override
     public User createMute(String screenName) throws TwitterException {
-        return usersResources.createMute(screenName);
+        return resources.createMute(screenName);
     }
 
     @Override
     public User destroyMute(long userId) throws TwitterException {
-        return usersResources.destroyMute(userId);
+        return resources.destroyMute(userId);
     }
 
     @Override
     public User destroyMute(String screenName) throws TwitterException {
-        return usersResources.destroyMute(screenName);
+        return resources.destroyMute(screenName);
     }
 
     @Override
     public ResponseList<User> lookupUsers(long... ids) throws TwitterException {
-        return throttleStrategy.throttle("/users/lookup", () -> {
+        return throttleStrategy.throttle(ResourceFamily.usersLookup, () -> {
             try {
-                return Either.right(usersResources.lookupUsers(ids));
+                return Either.right(resources.lookupUsers(ids));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -226,9 +223,9 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public ResponseList<User> lookupUsers(String... screenNames) throws TwitterException {
-        return throttleStrategy.throttle("/users/lookup", () -> {
+        return throttleStrategy.throttle(ResourceFamily.usersLookup, () -> {
             try {
-                return Either.right(usersResources.lookupUsers(screenNames));
+                return Either.right(resources.lookupUsers(screenNames));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -237,9 +234,9 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public User showUser(long userId) throws TwitterException {
-        return throttleStrategy.throttle("/users/show/:id", () -> {
+        return throttleStrategy.throttle(ResourceFamily.usersShowId, () -> {
             try {
-                return Either.right(usersResources.showUser(userId));
+                return Either.right(resources.showUser(userId));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -248,9 +245,9 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public User showUser(String screenName) throws TwitterException {
-        return throttleStrategy.throttle("/users/show/:id", () -> {
+        return throttleStrategy.throttle(ResourceFamily.usersShowId, () -> {
             try {
-                return Either.right(usersResources.showUser(screenName));
+                return Either.right(resources.showUser(screenName));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -259,9 +256,9 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public ResponseList<User> searchUsers(String query, int page) throws TwitterException {
-        return throttleStrategy.throttle("/users/search", () -> {
+        return throttleStrategy.throttle(ResourceFamily.usersSearch, () -> {
             try {
-                return Either.right(usersResources.searchUsers(query, page));
+                return Either.right(resources.searchUsers(query, page));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -270,36 +267,36 @@ public class UsersResourcesWrapper implements UsersResources {
 
     @Override
     public ResponseList<User> getContributees(long userId) throws TwitterException {
-        return usersResources.getContributees(userId);
+        return resources.getContributees(userId);
     }
 
     @Override
     public ResponseList<User> getContributees(String screenName) throws TwitterException {
-        return usersResources.getContributees(screenName);
+        return resources.getContributees(screenName);
     }
 
     @Override
     public ResponseList<User> getContributors(long userId) throws TwitterException {
-        return usersResources.getContributors(userId);
+        return resources.getContributors(userId);
     }
 
     @Override
     public ResponseList<User> getContributors(String screenName) throws TwitterException {
-        return usersResources.getContributors(screenName);
+        return resources.getContributors(screenName);
     }
 
     @Override
     public void removeProfileBanner() throws TwitterException {
-        usersResources.removeProfileBanner();
+        resources.removeProfileBanner();
     }
 
     @Override
     public void updateProfileBanner(File image) throws TwitterException {
-        usersResources.updateProfileBanner(image);
+        resources.updateProfileBanner(image);
     }
 
     @Override
     public void updateProfileBanner(InputStream image) throws TwitterException {
-        usersResources.updateProfileBanner(image);
+        resources.updateProfileBanner(image);
     }
 }

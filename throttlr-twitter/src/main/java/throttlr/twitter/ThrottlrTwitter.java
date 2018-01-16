@@ -1,7 +1,5 @@
 package throttlr.twitter;
 
-import throttlr.twitter.internal.SystemTimeSource;
-import throttlr.twitter.strategy.CruiseThrottleStrategy;
 import throttlr.twitter.strategy.ThrottleStrategy;
 import throttlr.twitter.wrapper.*;
 import twitter4j.*;
@@ -17,7 +15,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Map;
 
-public class TwitterThrottlr implements Twitter {
+public class ThrottlrTwitter implements Twitter {
 
     private Twitter twitter;
     private TimelinesResources timelinesResources;
@@ -35,11 +33,7 @@ public class TwitterThrottlr implements Twitter {
     private SpamReportingResource spamReportingResource;
     private HelpResources helpResources;
 
-    public static Twitter forCruise(Twitter twitter) {
-        return new TwitterThrottlr(twitter, new CruiseThrottleStrategy(new SystemTimeSource()));
-    }
-
-    public TwitterThrottlr(Twitter twitter, ThrottleStrategy throttleStrategy) {
+    public ThrottlrTwitter(Twitter twitter, ThrottleStrategy throttleStrategy) {
         this.twitter = twitter;
         this.timelinesResources = new TimelinesResourcesWrapper(twitter.timelines(), throttleStrategy);
         this.tweetsResources = new TweetsResourcesWrapper(twitter.tweets(), throttleStrategy);

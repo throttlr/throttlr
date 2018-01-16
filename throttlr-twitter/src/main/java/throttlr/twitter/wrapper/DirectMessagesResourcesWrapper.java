@@ -1,5 +1,6 @@
 package throttlr.twitter.wrapper;
 
+import throttlr.twitter.common.ResourceFamily;
 import throttlr.twitter.internal.Either;
 import throttlr.twitter.strategy.ThrottleStrategy;
 import twitter4j.DirectMessage;
@@ -10,21 +11,17 @@ import twitter4j.api.DirectMessagesResources;
 
 import java.io.InputStream;
 
-public class DirectMessagesResourcesWrapper implements DirectMessagesResources {
-
-    private ThrottleStrategy throttleStrategy;
-    private DirectMessagesResources directMessagesResources;
+public class DirectMessagesResourcesWrapper extends WrapperBase<DirectMessagesResources> implements DirectMessagesResources {
 
     public DirectMessagesResourcesWrapper(DirectMessagesResources directMessagesResources, ThrottleStrategy throttleStrategy) {
-        this.throttleStrategy = throttleStrategy;
-        this.directMessagesResources = directMessagesResources;
+        super(directMessagesResources, throttleStrategy);
     }
 
     @Override
     public ResponseList<DirectMessage> getDirectMessages() throws TwitterException {
-        return throttleStrategy.throttle("/direct_messages", () -> {
+        return throttleStrategy.throttle(ResourceFamily.directMessages, () -> {
             try {
-                return Either.right(directMessagesResources.getDirectMessages());
+                return Either.right(resources.getDirectMessages());
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -33,9 +30,9 @@ public class DirectMessagesResourcesWrapper implements DirectMessagesResources {
 
     @Override
     public ResponseList<DirectMessage> getDirectMessages(Paging paging) throws TwitterException {
-        return throttleStrategy.throttle("/direct_messages", () -> {
+        return throttleStrategy.throttle(ResourceFamily.directMessages, () -> {
             try {
-                return Either.right(directMessagesResources.getDirectMessages(paging));
+                return Either.right(resources.getDirectMessages(paging));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -44,9 +41,9 @@ public class DirectMessagesResourcesWrapper implements DirectMessagesResources {
 
     @Override
     public ResponseList<DirectMessage> getSentDirectMessages() throws TwitterException {
-        return throttleStrategy.throttle("/direct_messages/sent", () -> {
+        return throttleStrategy.throttle(ResourceFamily.directMessagesSent, () -> {
             try {
-                return Either.right(directMessagesResources.getSentDirectMessages());
+                return Either.right(resources.getSentDirectMessages());
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -55,9 +52,9 @@ public class DirectMessagesResourcesWrapper implements DirectMessagesResources {
 
     @Override
     public ResponseList<DirectMessage> getSentDirectMessages(Paging paging) throws TwitterException {
-        return throttleStrategy.throttle("/direct_messages/sent", () -> {
+        return throttleStrategy.throttle(ResourceFamily.directMessagesSent, () -> {
             try {
-                return Either.right(directMessagesResources.getSentDirectMessages(paging));
+                return Either.right(resources.getSentDirectMessages(paging));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -66,9 +63,9 @@ public class DirectMessagesResourcesWrapper implements DirectMessagesResources {
 
     @Override
     public DirectMessage showDirectMessage(long id) throws TwitterException {
-        return throttleStrategy.throttle("/direct_messages/show", () -> {
+        return throttleStrategy.throttle(ResourceFamily.directMessagesShow, () -> {
             try {
-                return Either.right(directMessagesResources.showDirectMessage(id));
+                return Either.right(resources.showDirectMessage(id));
             } catch (TwitterException e) {
                 return Either.left(e);
             }
@@ -77,21 +74,21 @@ public class DirectMessagesResourcesWrapper implements DirectMessagesResources {
 
     @Override
     public DirectMessage destroyDirectMessage(long id) throws TwitterException {
-        return directMessagesResources.destroyDirectMessage(id);
+        return resources.destroyDirectMessage(id);
     }
 
     @Override
     public DirectMessage sendDirectMessage(long userId, String text) throws TwitterException {
-        return directMessagesResources.sendDirectMessage(userId, text);
+        return resources.sendDirectMessage(userId, text);
     }
 
     @Override
     public DirectMessage sendDirectMessage(String screenName, String text) throws TwitterException {
-        return directMessagesResources.sendDirectMessage(screenName, text);
+        return resources.sendDirectMessage(screenName, text);
     }
 
     @Override
     public InputStream getDMImageAsStream(String url) throws TwitterException {
-        return directMessagesResources.getDMImageAsStream(url);
+        return resources.getDMImageAsStream(url);
     }
 }

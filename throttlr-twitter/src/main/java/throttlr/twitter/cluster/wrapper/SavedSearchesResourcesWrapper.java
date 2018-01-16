@@ -1,22 +1,22 @@
-package throttlr.twitter.wrapper;
+package throttlr.twitter.cluster.wrapper;
 
+import throttlr.twitter.cluster.strategy.LoadBalanceStrategy;
 import throttlr.twitter.common.ResourceFamily;
 import throttlr.twitter.internal.Either;
-import throttlr.twitter.strategy.ThrottleStrategy;
 import twitter4j.ResponseList;
 import twitter4j.SavedSearch;
 import twitter4j.TwitterException;
 import twitter4j.api.SavedSearchesResources;
 
-public class SavedSearchesResourcesWrapper extends WrapperBase<SavedSearchesResources> implements SavedSearchesResources {
+public class SavedSearchesResourcesWrapper extends WrapperBase implements SavedSearchesResources {
 
-    public SavedSearchesResourcesWrapper(SavedSearchesResources savedSearchesResources, ThrottleStrategy throttleStrategy) {
-        super(savedSearchesResources, throttleStrategy);
+    public SavedSearchesResourcesWrapper(LoadBalanceStrategy loadBalanceStrategy) {
+        super(loadBalanceStrategy);
     }
 
     @Override
     public ResponseList<SavedSearch> getSavedSearches() throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.savedSearchesList, () -> {
+        return loadBalanceStrategy.balance(ResourceFamily.savedSearchesList, (resources) -> {
             try {
                 return Either.right(resources.getSavedSearches());
             } catch (TwitterException e) {
@@ -27,7 +27,7 @@ public class SavedSearchesResourcesWrapper extends WrapperBase<SavedSearchesReso
 
     @Override
     public SavedSearch showSavedSearch(long id) throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.savedSearchesShowId, () -> {
+        return loadBalanceStrategy.balance(ResourceFamily.savedSearchesShowId, (resources) -> {
             try {
                 return Either.right(resources.showSavedSearch(id));
             } catch (TwitterException e) {
@@ -38,17 +38,11 @@ public class SavedSearchesResourcesWrapper extends WrapperBase<SavedSearchesReso
 
     @Override
     public SavedSearch createSavedSearch(String query) throws TwitterException {
-        return resources.createSavedSearch(query);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public SavedSearch destroySavedSearch(long id) throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.savedSearchesDestroyId, () -> {
-            try {
-                return Either.right(resources.destroySavedSearch(id));
-            } catch (TwitterException e) {
-                return Either.left(e);
-            }
-        });
+        throw new UnsupportedOperationException();
     }
 }

@@ -1,8 +1,8 @@
-package throttlr.twitter.wrapper;
+package throttlr.twitter.cluster.wrapper;
 
+import throttlr.twitter.cluster.strategy.LoadBalanceStrategy;
 import throttlr.twitter.common.ResourceFamily;
 import throttlr.twitter.internal.Either;
-import throttlr.twitter.strategy.ThrottleStrategy;
 import twitter4j.RateLimitStatus;
 import twitter4j.ResponseList;
 import twitter4j.TwitterAPIConfiguration;
@@ -11,15 +11,15 @@ import twitter4j.api.HelpResources;
 
 import java.util.Map;
 
-public class HelpResourcesWrapper extends WrapperBase<HelpResources> implements HelpResources {
+public class HelpResourcesWrapper extends WrapperBase implements HelpResources {
 
-    public HelpResourcesWrapper(HelpResources helpResources, ThrottleStrategy throttleStrategy) {
-        super(helpResources, throttleStrategy);
+    public HelpResourcesWrapper(LoadBalanceStrategy loadBalanceStrategy) {
+        super(loadBalanceStrategy);
     }
 
     @Override
     public TwitterAPIConfiguration getAPIConfiguration() throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.helpConfiguration, () -> {
+        return loadBalanceStrategy.balance(ResourceFamily.helpConfiguration, (resources) -> {
             try {
                 return Either.right(resources.getAPIConfiguration());
             } catch (TwitterException e) {
@@ -30,7 +30,7 @@ public class HelpResourcesWrapper extends WrapperBase<HelpResources> implements 
 
     @Override
     public ResponseList<Language> getLanguages() throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.helpLanguages, () -> {
+        return loadBalanceStrategy.balance(ResourceFamily.helpLanguages, (resources) -> {
             try {
                 return Either.right(resources.getLanguages());
             } catch (TwitterException e) {
@@ -41,21 +41,21 @@ public class HelpResourcesWrapper extends WrapperBase<HelpResources> implements 
 
     @Override
     public String getPrivacyPolicy() throws TwitterException {
-        return resources.getPrivacyPolicy();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getTermsOfService() throws TwitterException {
-        return resources.getTermsOfService();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Map<String, RateLimitStatus> getRateLimitStatus() throws TwitterException {
-        return resources.getRateLimitStatus();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Map<String, RateLimitStatus> getRateLimitStatus(String... resources) throws TwitterException {
-        return this.resources.getRateLimitStatus(resources);
+        throw new UnsupportedOperationException();
     }
 }

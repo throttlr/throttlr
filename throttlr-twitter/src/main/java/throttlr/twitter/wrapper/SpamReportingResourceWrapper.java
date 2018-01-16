@@ -5,23 +5,19 @@ import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.api.SpamReportingResource;
 
-public class SpamReportingResourceWrapper implements SpamReportingResource {
-
-    private ThrottleStrategy throttleStrategy;
-    private SpamReportingResource spamReportingResource;
+public class SpamReportingResourceWrapper extends WrapperBase<SpamReportingResource> implements SpamReportingResource {
 
     public SpamReportingResourceWrapper(SpamReportingResource spamReportingResource, ThrottleStrategy throttleStrategy) {
-        this.throttleStrategy = throttleStrategy;
-        this.spamReportingResource = spamReportingResource;
+        super(spamReportingResource, throttleStrategy);
     }
 
     @Override
     public User reportSpam(long userId) throws TwitterException {
-        return spamReportingResource.reportSpam(userId);
+        return resources.reportSpam(userId);
     }
 
     @Override
     public User reportSpam(String screenName) throws TwitterException {
-        return spamReportingResource.reportSpam(screenName);
+        return resources.reportSpam(screenName);
     }
 }

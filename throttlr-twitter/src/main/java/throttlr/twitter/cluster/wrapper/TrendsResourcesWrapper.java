@@ -1,20 +1,20 @@
-package throttlr.twitter.wrapper;
+package throttlr.twitter.cluster.wrapper;
 
+import throttlr.twitter.cluster.strategy.LoadBalanceStrategy;
 import throttlr.twitter.common.ResourceFamily;
 import throttlr.twitter.internal.Either;
-import throttlr.twitter.strategy.ThrottleStrategy;
 import twitter4j.*;
 import twitter4j.api.TrendsResources;
 
-public class TrendsResourcesWrapper extends WrapperBase<TrendsResources> implements TrendsResources {
+public class TrendsResourcesWrapper extends WrapperBase implements TrendsResources {
 
-    public TrendsResourcesWrapper(TrendsResources trendsResources, ThrottleStrategy throttleStrategy) {
-        super(trendsResources, throttleStrategy);
+    public TrendsResourcesWrapper(LoadBalanceStrategy loadBalanceStrategy) {
+        super(loadBalanceStrategy);
     }
 
     @Override
     public Trends getPlaceTrends(int woeid) throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.trendsPlace, () -> {
+        return loadBalanceStrategy.balance(ResourceFamily.trendsPlace, (resources) -> {
             try {
                 return Either.right(resources.getPlaceTrends(woeid));
             } catch (TwitterException e) {
@@ -25,7 +25,7 @@ public class TrendsResourcesWrapper extends WrapperBase<TrendsResources> impleme
 
     @Override
     public ResponseList<Location> getAvailableTrends() throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.trendsAvailable, () -> {
+        return loadBalanceStrategy.balance(ResourceFamily.trendsAvailable, (resources) -> {
             try {
                 return Either.right(resources.getAvailableTrends());
             } catch (TwitterException e) {
@@ -36,7 +36,7 @@ public class TrendsResourcesWrapper extends WrapperBase<TrendsResources> impleme
 
     @Override
     public ResponseList<Location> getClosestTrends(GeoLocation location) throws TwitterException {
-        return throttleStrategy.throttle(ResourceFamily.trendsClosest, () -> {
+        return loadBalanceStrategy.balance(ResourceFamily.trendsClosest, (resources) -> {
             try {
                 return Either.right(resources.getClosestTrends(location));
             } catch (TwitterException e) {
